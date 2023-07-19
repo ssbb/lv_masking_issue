@@ -1,0 +1,27 @@
+<.header>
+  Poduct <%= @poduct.id %>
+  <:subtitle>This is a poduct record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/products/#{@poduct}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit poduct</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Amount"><%= @poduct.amount %></:item>
+  <:item title="Title"><%= @poduct.title %></:item>
+</.list>
+
+<.back navigate={~p"/products"}>Back to products</.back>
+
+<.modal :if={@live_action == :edit} id="poduct-modal" show on_cancel={JS.patch(~p"/products/#{@poduct}")}>
+  <.live_component
+    module={LiveViewMaskingExampleWeb.PoductLive.FormComponent}
+    id={@poduct.id}
+    title={@page_title}
+    action={@live_action}
+    poduct={@poduct}
+    patch={~p"/products/#{@poduct}"}
+  />
+</.modal>

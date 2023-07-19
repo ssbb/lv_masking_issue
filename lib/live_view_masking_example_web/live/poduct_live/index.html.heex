@@ -1,0 +1,42 @@
+<.header>
+  Listing Products
+  <:actions>
+    <.link patch={~p"/products/new"}>
+      <.button>New Poduct</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="products"
+  rows={@streams.products}
+  row_click={fn {_id, poduct} -> JS.navigate(~p"/products/#{poduct}") end}
+>
+  <:col :let={{_id, poduct}} label="Amount"><%= poduct.amount %></:col>
+  <:col :let={{_id, poduct}} label="Title"><%= poduct.title %></:col>
+  <:action :let={{_id, poduct}}>
+    <div class="sr-only">
+      <.link navigate={~p"/products/#{poduct}"}>Show</.link>
+    </div>
+    <.link patch={~p"/products/#{poduct}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, poduct}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: poduct.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="poduct-modal" show on_cancel={JS.patch(~p"/products")}>
+  <.live_component
+    module={LiveViewMaskingExampleWeb.PoductLive.FormComponent}
+    id={@poduct.id || :new}
+    title={@page_title}
+    action={@live_action}
+    poduct={@poduct}
+    patch={~p"/products"}
+  />
+</.modal>
